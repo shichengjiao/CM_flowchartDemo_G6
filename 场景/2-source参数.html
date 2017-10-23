@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>加载数据</title>
+    <script src="../jquery.js"></script>
+    <script src="../index.js"></script>
+</head>
+<body>
+<div id="c1"></div>
+<script type="text/javascript">
+    var data = {
+        "nodes": [
+            {
+                "shape": "circle",
+                "label": "文本c",
+                "x": 150,
+                "y": 170,
+                "id": "0372c42e",
+                "size": 50,
+                "style": {
+                    "fill": "red"
+                }
+            },
+            {
+                "shape": "rect",
+                "label": "文本r",
+                "x": 340,
+                "y": 80,
+                "id": "2ba5018b"
+            }
+        ],
+        "edges": [
+            {
+                "shape": "smooth",
+                "source": "0372c42e",
+                "target": "2ba5018b",
+                "id": "2d69912a",
+                "targetAnchor": 2,
+                "sourceAnchor": 1,
+                "controlPoints": [
+                    {
+                        "x": 150,
+                        "y": 144.5
+                    },
+                    {
+                        "x": 280,
+                        "y": 160
+                    },
+                    {
+                        "x": 340,
+                        "y": 96
+                    }
+                ]
+            }
+        ]
+    };
+    var Util = G6.Util;
+    var net = new G6.Net({
+        id: 'c1',            // 容器ID
+        grid: null,
+        width: 500,
+        height: 450          // 画布高
+    });
+    net.source(data.nodes, data.edges);
+    net.render();
+</script>
+
+</body>
+</html>
+          

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>事件</title>
+    <script src="../jquery.js"></script>
+    <script src="../index.js"></script>
+</head>
+<body>
+<div id="c1"></div>
+<script type="text/javascript">
+    var data = {
+        nodes: [
+            {
+                "id": "node1",
+                "x": 100,
+                "y": 160
+            },
+            {
+                "id": "node2",
+                "x": 290,
+                "y": 160
+            }
+        ],
+        edges: [
+            {
+                "id": "node1-node2",
+                "target": "node1",
+                "source": "node2"
+            }
+        ]
+    };
+    var net = new G6.Net({
+        id: 'c1',           // 容器ID
+        height: 450         // 画布高
+    });
+    net.source(data.nodes, data.edges);
+    net.render();
+    net.on('itemclick', function(ev){
+        console.log("66666666666",ev);
+        alert("击中" + ev.item.get('model').id + "!");
+    });
+    net.on('itemmousedown', function(ev){
+        var item = ev.item;
+        if(net.isNode(item)){
+            net.update(item, {
+                shape: 'circle'
+            });
+            net.refresh();
+        }
+    });
+    net.on('itemmouseup', function(ev){
+        var item = ev.item;
+        if(net.isNode(item)){
+            net.update(item, {
+                shape: 'rect'
+            });
+            net.refresh();
+        }
+    });
+    net.on('itemmouseenter', function(ev){
+        var item = ev.item;
+        net.update(item, {
+            color: 'red'
+        });
+        net.refresh();
+    });
+    net.on('itemmouseleave', function(ev){
+        var item = ev.item;
+        net.update(item, {
+            color: null
+        });
+        console.log(item.getEdges());
+        net.refresh();
+    });
+    net.on("contextmenu",function (ev) {    //右键
+        console.log(ev);
+//        ev.
+    });
+//    net.changeMode("default");            //改变模式
+    console.log(net.modes);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>关系图</title>
+    <!-- 第一步：引入G6 -->
+    <script src="index.js"></script>
+</head>
+<body>
+<!-- 第二步：创建DOM容器 -->
+<div id="c1"></div>
+<script>
+    G6.registNode('customRect', {
+        afterDraw: function(cfg, group) {
+            group.addShape('text', {
+                attrs: {
+                    x: cfg.x-cfg.size[0]/2,
+                    y: cfg.y-cfg.size[1]/2,
+                    fill: 'red',
+                    text: '我是绘制（draw）节点\n后添加的文本'
+                }
+            });
+        }
+    });
+    G6.registEdge('line', {
+        afterDraw: function(cfg, group, keyShape) {
+            var center = keyShape.getPoint(0.5);
+            group.addShape('text', {
+                attrs: {
+                    x: center.x,
+                    y: center.y,
+                    fill: 'blue',
+                    textAlign: 'center',
+                    text: '我是绘制（draw）边\n后添加的文本'
+                }
+            });
+        }
+    });
+    var data = {
+        source: {
+            "nodes": [
+                {
+                    "x": 100,
+                    "y": 210,
+                    "id": "node1"
+                },
+                {
+                    "x": 300,
+                    "y": 210,
+                    "id": "node2"
+                }
+            ],
+            "edges": [
+                {
+                    "source": "node1",
+                    "id": "edge1",
+                    "target": "node2"
+                }
+            ]
+        }
+    };
+    var net = new G6.Net({
+        id: 'c1',      // 容器ID
+        width: 500,    // 画布宽
+        height: 500,   // 画布高
+        mode: 'none',  // 模式
+        grid: {
+            forceAlign: true, // 是否支持网格对齐
+            cell: 10          // 网格大小
+        }
+    });
+    net.node().shape('customRect');
+    net.read(data);
+    net.render();
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "nodes": [
+    {
+      "shape": "circle",
+      "x": 210,
+      "y": 110,
+      "id": "2800a614"
+    },
+    {
+      "shape": "rect",
+      "x": 370,
+      "y": 110,
+      "id": "febc40c1"
+    }
+  ],
+  "edges": [
+    {
+      "shape": "smooth",
+      "source": "2800a614",
+      "target": "febc40c1",
+      "id": "868ece12"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>关系图</title>
+    <!-- 第一步：引入G6 -->
+    <script src="index.js"></script>
+</head>
+<body>
+<!-- 第二步：创建DOM容器 -->
+<div id="c1"></div>
+<script>
+    var data = {
+        "nodes": [
+            {
+                "shape": "customNode",
+                "x": 100,
+                "y": 250,
+                "id": "d62d1569"
+            },
+            {
+                "shape": "customNode",
+                "x": 380,
+                "y": 250,
+                "id": "d62s1569"
+            }
+        ],
+        "edges": [
+            {
+                "shape": "customEdge",
+                "source": "d62d1569",
+                "id": "75ae90a8",
+                "target": "d62s1569"
+            }
+        ]
+    };
+    G6.registNode('customNode', {
+        draw: function(cfg, group){
+            group.addShape('text', {
+                attrs: {
+                    x: cfg.x-50,
+                    y: cfg.y-50,
+                    fill: '#333',
+                    text: '我是一个自定义节点（node）'
+                }
+            });
+            return group.addShape('rect', {
+                attrs: {
+                    x: cfg.x-50,
+                    y: cfg.y-50,
+                    width: cfg.size,
+                    height: cfg.size,
+                    stroke: cfg.color
+                }
+            });
+        }
+    });
+    G6.registEdge('customEdge', {
+        draw: function(cfg, group){
+            group.addShape('text', {
+                attrs: {
+                    x: (cfg.points[0].x + cfg.points[1].x)/2,
+                    y: (cfg.points[0].y + cfg.points[1].y)/2,
+                    fill: '#333',
+                    text: '我是一个自定义边（edge）',
+                    textAlign: 'center'
+                }
+            });
+            return group.addShape('polyline', {
+                attrs: {
+                    points: [
+                        [cfg.points[0].x, cfg.points[0].y],
+                        [cfg.points[1].x, cfg.points[1].y]
+                    ],
+                    stroke: cfg.color,
+                    lineWidth: cfg.size
+                }
+            });
+        }
+    });
+    var net = new G6.Net({
+        id: 'c1',       // 容器ID
+        width: 500,     // 画布宽
+        height: 500     // 画布高
+    });
+    net.source(data.nodes, data.edges);
+    net.node()
+        .color('red')
+        .size(100);
+    net.edge()
+        .color('blue')
+        .size(3);
+    net.render();
+</script>
+</body>
+</html>

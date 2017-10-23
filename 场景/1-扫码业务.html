@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>扫码业务</title>
+    <script src="../jquery.js"></script>
+    <script src="../index.js"></script>
+</head>
+<body>
+<div id="c1"></div>
+<script type="text/javascript">
+
+    function afterDrawEdge(cfg, group, keyShape){
+        var start = keyShape.getPoint(0);
+        var center = keyShape.getPoint(0.5);
+        var end = keyShape.getPoint(1);
+        var labelPadding = 6;
+        var labelShape;
+        var labelBox;
+
+        // 文本
+        labelShape = group.addShape('text', {
+            attrs: {
+                x: center.x,
+                y: center.y,
+                text: cfg.label,
+                fill: 'white',
+                textBaseline: 'middle',
+                textAlign: 'center'
+            },
+            zIndex: 4
+        });
+        labelBox = labelShape.getBBox();
+
+        // 文本框
+        group.addShape('rect', {
+            attrs: {
+                x: labelBox.minX - labelPadding,
+                y: labelBox.minY - labelPadding,
+                width: labelBox.maxX - labelBox.minX + 2 * labelPadding,
+                height: labelBox.maxY - labelBox.minY + 2 * labelPadding,
+                fill: 'black',
+                radius: 8
+            },
+            zIndex: 3
+        });
+
+        // 起始点圆
+//        group.addShape('circle', {
+//            attrs: {
+//                x: start.x,
+//                y: start.y,
+//                r: 5,
+//                fill: 'black'
+//            },
+//            zIndex: 3
+//        });
+
+        return keyShape;
+    }
+
+    function drawCard(cfg, group){
+        var model = cfg.model;
+        var width = 200;
+        var height = 80;
+        var upRectHeight = 50;
+        var x = cfg.x - width/2; // 左上角x
+        var y = cfg.y - height/2; // 左上角y
+        var color = cfg.color;
+        var padding = 10;
+        var count = model.count;
+        var keyShape;
+
+        keyShape = group.addShape('rect', {
+            attrs: {
+                x: x,
+                y: y,
+                width: width,
+                height: height,
+                stroke: '#999',
+                radius: 10,
+                fill: 'white'
+            }
+        });
+
+        group.addShape('rect', {
+            attrs: {
+                x: x,
+                y: y,
+                width: width,
+                height: upRectHeight,
+                fill: color,
+                clip: keyShape
+            }
+        });
+        // 标题
+        group.addShape('text', {
+            attrs: {
+                x: x + padding,
+                y: y + padding,
+                text: cfg.label,
+                textBaseline: 'top',
+                textAlign: 'left',
+                fontSize: 18,
+                fill: 'white'
+            }
+        });
+
+        // 请求数名
+        group.addShape('text', {
+            attrs: {
+                x: x + padding,
+                y: y + upRectHeight + padding,
+                text: '数目：',
+                textBaseline: 'top',
+                textAlign: 'left',
+                fontSize: 14,
+                fill: 'black'
+            }
+        });
+
+        // 请求数
+        group.addShape('text', {
+            attrs: {
+                x: cfg.x + width/2 - padding,
+                y: y + upRectHeight + padding,
+                text: count + ' 笔',
+                textBaseline: 'top',
+                textAlign: 'right',
+                fontSize: 14,
+                fill: 'red'
+            }
+        });
+
+        return keyShape;
+    }
+
+    // 第一步：获取数据
+    var data = {
+        "nodes": [
+            {
+                "id": "扫码请求成功数",
+                "count": 222190,
+                "x": 200,
+                "y": 160,
+                "success": true
+            },
+            {
+                "id": "扫码请求数",
+                "count": 2221902,
+                "x": 590,
+                "y": 160,
+                "success": true
+            },
+            {
+                "id": "请求创建交易总数",
+                "count": 221231,
+                "x": 580,
+                "y": 380,
+                "success": false
+            }
+        ],
+        "edges": [
+            {
+                "shape": "customLine",      //形状是自己注册的形状
+                "source": "扫码请求数",
+                "id": "d952611b",
+                "precent": 100,
+                "target": "扫码请求成功数"
+            },
+            {
+                "shape": "customCurve",
+                "source": "扫码请求成功数",
+                "id": "a893c28f",
+                "precent": 80,
+                "target": "请求创建交易总数",
+                "sourceAnchor": 2,
+                "targetAnchor": 3
+            }
+        ]
+    };
+
+    // 第二步：注册节点
+    G6.registNode('customNode', {
+        draw: function(cfg, group){
+            return drawCard(cfg, group);
+        }
+    });
+
+    G6.registEdge('customLine', {
+        afterDraw: function(cfg , group, keyShape){
+            return afterDrawEdge(cfg, group, keyShape);
+        }
+    }, 'line');
+
+    G6.registEdge('customCurve', {
+        afterDraw: function(cfg, group, keyShape){
+            return afterDrawEdge(cfg, group, keyShape);
+        }
+    }, 'smooth');
+
+    // 第三步：初始化图
+    var net = new G6.Net({
+        id: 'c1',            // 容器ID
+        height: 450,         // 画布高
+        fitView: 'autoZoom', // 自动缩放
+//        modes:{
+//            default: ['dragNode', 'clickActive'],
+//            add: ['clickAddNode']
+//        },
+//        mode:'default',           //当前选择的模式
+    });
+
+    // 第四步：数据映射
+    net.node()
+        .color('success', function(val){
+            var rst;
+            if(val){
+                rst = '#3B89CF';
+            }else{
+                rst = '#F90426';
+            }
+            return rst;
+        })
+        .label('id')
+        .shape('customNode');
+    net.edge()
+        .label('precent');
+
+    // 第五步：载入数据
+    net.source(data.nodes, data.edges);
+
+    // 第六步：数据映射
+    net.edge().style({
+        stroke: 'black',
+        lineWidth: 4,
+        arrow: true
+    });
+
+    // 第七步：渲染关系图
+    net.render();
+</script>
+
+</body>
+</html>
