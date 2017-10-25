@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>HTML 节点</title>
+    <script src="../jquery.js"></script>
+    <script src="../index.js"></script>
+</head>
+<body>
+<div id="c1"></div>
+<p>
+    <style>
+        .customNode1 {
+            background-color: red !important;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .customNode2 {
+            background-color: red !important;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            width: 80px;
+            height: 80px;
+        }
+        .customNode4{
+            width: 80px;
+            height: 80px;
+        }
+    </style>
+</p>
+<script type="text/javascript">
+    var Util = G6.Util;
+    G6.registNode('customHtml1', {
+        getHtml: function(cfg){
+            var model = cfg.model;
+            var dom = Util.createDOM('<ul class="customNode1"><li>html节点</li><li>'+model.id+'</li><li>x:'+model.x+'</li><li>y:'+model.y+'</li></ul>');
+            return dom;
+        }
+    }, 'html');
+    G6.registNode('customHtml2', {
+        cssSize: true, // 该配置项设置为 true 时，则节点不受 node size 控制
+        getHtml: function(cfg){
+            var model = cfg.model;
+            var dom = Util.createDOM('<ul class="customNode2"><li>html节点</li><li>'+model.id+'</li><li>x:'+model.x+'</li><li>y:'+model.y+'</li></ul>');
+            return dom;
+        }
+    }, 'html');
+    G6.registNode('customHtml3', {
+        cssSize: true,
+        getHtml: function(cfg){
+            var model = cfg.model;
+            // 除了返回 dom 元素还能返回html字符串
+            return '<ul class="customNode2"><li>html节点</li><li>'+model.id+'</li><li>x:'+model.x+'</li><li>y:'+model.y+'</li></ul>';
+        }
+    }, 'html');
+    G6.registNode('customHtmlImage', {
+        cssSize: true,
+        getHtml: function(cfg){
+            var model = cfg.model;
+//            return '<div><img class="customNode4" src="'+model.image+'"></div>';
+            var dom = Util.createDOM('<div class="customNode4"><img src="'+model.image+'"></div>');
+            return dom;
+        }
+    }, 'html');
+    var data = {
+        "nodes": [
+            {
+                "id": "node1",
+                "x": 50,
+                "y": 170,
+                "shape": "customHtml1"
+            },
+            {
+                "id": "node2",
+                "x": 180,
+                "y": 170,
+                "shape": "customHtml2"
+            },
+            {
+                "id": "node3",
+                "x": 180,
+                "y": 270,
+                "shape": "customHtml3"
+            },
+            {
+                "id": "node4",
+                "x": 280,
+                "y": 270,
+                "shape": "customHtmlImage",
+                "image":"../male.png"
+            }
+        ],
+        "edges": [
+            {
+                "source": "node1",
+                "id": "edge1",
+                "target": "node2"
+            }
+        ]
+    };
+    var net = new G6.Net({
+        id: 'c1',      // 容器ID
+        width: 500,    // 画布宽
+        height: 500    // 画布高
+    });
+    net.source(data.nodes, data.edges);
+//    net.node().style({stroke:null});
+    net.edge().style({
+        arrow: true
+    });
+    net.on('click', function(ev){
+        var shape = ev.shape;
+        if(shape){
+            var dom = shape.get('dom');
+            console.log(dom);
+        }
+    });
+    net.render();
+</script>
+</body>
+</html>
